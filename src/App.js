@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 
 const App = () => {
@@ -11,6 +11,10 @@ const App = () => {
             .then(response => response.json())
             .then(data => setTabs(data.sort((a, b) => a.order - b.order)));
     }, []);
+
+    if (!tabs.length) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container">
@@ -28,6 +32,8 @@ const App = () => {
 
             <div className="tabs-content">
                 <Routes>
+                    <Route path="/" element={<Navigate to={`/${tabs[0]?.id}`} replace />} index />
+
                     {tabs.map(tab => {
                         const LazyComponent = React.lazy(() => import(`./pages/tabs/${tab.path.split('/').pop()}`));
                         return (
